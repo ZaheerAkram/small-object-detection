@@ -1,0 +1,12 @@
+numpy
+pandas
+matplotlib
+seaborn
+opencv-python-headless
+tqdm
+scikit-learn
+pyyaml
+torch
+torchvision
+ultralytics
+kaggle
