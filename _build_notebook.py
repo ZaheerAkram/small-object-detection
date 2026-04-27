@@ -246,7 +246,8 @@ print(f"  Device   : {HW['device']}")
 print(f"  GPU      : {HW['name']}  ({HW['mem_gb']} GB)")
 print(f"  Torch    : {torch.__version__}  CUDA: {torch.version.cuda}")
 if HW["device"] == "cpu":
-    print("  WARNING: No GPU detected — training will be extremely slow.")
+    sys.stderr.write("\nERROR: No CUDA-capable GPU detected. This notebook requires a GPU to run.\n")
+    sys.exit(1)
 
 # Free any leftover GPU memory from prior cell runs.
 gc.collect()
