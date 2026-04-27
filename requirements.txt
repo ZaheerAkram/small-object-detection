@@ -9,4 +9,3 @@ pyyaml
 torch
 torchvision
 ultralytics
-kaggle
