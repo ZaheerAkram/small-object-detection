@@ -1,15 +1,18 @@
 # YOLOv11 Small Object Detection on xView
 
-A faithful replication of:
+Replication of the **YOLOv11 portion** of:
 
-> **Yuan, Z. et al. (2026).** *Small object detection in remote sensing imagery: a YOLOv11-based study with 6-fold cross-validation on xView.* **Expert Systems with Applications, 307.**
+> Yuan, X., Chakravarty, A., Lichtenberg, E. M., Gu, L., Wei, Z., & Chen, T.
+> *An empirical analysis of deep learning methods for small object detection from satellite imagery.*
 
-The whole pipeline lives in a single notebook — [`small_object_detection_v1.ipynb`](small_object_detection_v1.ipynb) — and reproduces the paper's experimental protocol on a local NVIDIA GPU:
+That paper compares six deep-learning detectors — **YOLOv11**, Faster R-CNN, SSD, Cascade R-CNN, Deformable DETR, and RT-DETR — on three high-resolution satellite datasets, and concludes that **YOLOv11 achieves the most balanced performance for localization and adaptability**. Anchor-based methods (SSD / Faster R-CNN / Cascade R-CNN) are sensitive to anchor box size; Deformable DETR struggles on dense small-object clusters; RT-DETR is competitive but training-intensive. Because YOLOv11 is the strongest method overall, this repository reproduces just the YOLOv11 experiments end-to-end on the **xView** dataset.
+
+The whole pipeline lives in a single notebook — [`small_object_detection_v1.ipynb`](small_object_detection_v1.ipynb) — and runs on a local NVIDIA GPU:
 
 - 512×512 image tiling of the xView training set
 - 6-fold cross-validation, split at the **source-image level** (no leakage between train and val tiles)
-- Paper hyperparameters (Table 5): SGD, lr = 1.01e-4, momentum = 0.89, weight-decay = 5e-4, horizontal-flip-only augmentation
-- Four target vehicle classes (Paper Table 3): Small Car, Passenger Vehicle, Pickup Truck, Utility Truck
+- Training hyperparameters: SGD, lr = 1.01e-4, momentum = 0.89, weight-decay = 5e-4, horizontal-flip-only augmentation
+- Four target vehicle classes: Small Car, Passenger Vehicle, Pickup Truck, Utility Truck
 - Small-object filter: 10 px² ≤ object area ≤ 1000 px²
 
 The notebook is **interruption-safe** by design: kernel restarts, machine reboots, and accidental cell re-runs all resume cleanly from the last saved epoch.
@@ -77,7 +80,7 @@ Only the labelled training split is used. The public xView `val_images/` set has
 1. Drop `kaggle.json` into the project root (one-time).
 2. Open `small_object_detection_v1.ipynb` and decide between:
    - `DEBUG_MODE = True` — single-epoch smoke test on fold 0, end-to-end in a few minutes
-   - `DEBUG_MODE = False` — full 6-fold run with paper hyperparameters
+   - `DEBUG_MODE = False` — full 6-fold run with the training hyperparameters above
 3. **Run all cells.** On first run the dataset downloads, gets tiled, and training starts. Re-running the notebook resumes from the last saved checkpoint of every fold.
 
 ### Re-run / resume cheat sheet
@@ -93,15 +96,11 @@ Only the labelled training split is used. The public xView `val_images/` set has
 
 ---
 
-## Reference results (Paper Table 13)
+## Results
 
-| Metric  | Paper (mean ± std) |
-|---------|--------------------|
-| AP@50   | 69.47 ± 3.07       |
-| AP@50–95 | 29.58 ± 1.40      |
-| F1      | 73.97 ± 1.81       |
+The notebook's aggregation cell loads every per-fold CSV in `outputs/metrics/` and prints the **mean ± std** for AP@50, AP@50–95, Precision, Recall, and F1 as folds finish, so partial 6-fold runs are reportable too. Aggregated metrics are also written to `outputs/metrics/aggregated_results.json`.
 
-The notebook's aggregation cell prints the same table side-by-side with your run's mean / std as folds finish, so partial 6-fold runs are reportable too.
+To compare against the paper's published numbers, see Yuan et al.'s tables for YOLOv11 on xView in the source paper.
 
 ---
 
@@ -110,8 +109,7 @@ The notebook's aggregation cell prints the same table side-by-side with your run
 If you build on this replication, please cite the original paper:
 
 ```
-Yuan, Z. et al. (2026).
-Small object detection in remote sensing imagery:
-  a YOLOv11-based study with 6-fold cross-validation on xView.
-Expert Systems with Applications, 307.
+Yuan, X., Chakravarty, A., Lichtenberg, E. M., Gu, L., Wei, Z., & Chen, T.
+An empirical analysis of deep learning methods for small object detection
+  from satellite imagery.
 ```
