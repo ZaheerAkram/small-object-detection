@@ -2,3 +2,6 @@
 .env
 dataset/
 outputs/
+runs/
+kaggle.json
+__pycache__/
